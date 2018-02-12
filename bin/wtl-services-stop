@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import os
+import argcomplete, argparse
+import yaml
+import subprocess
+from pprint import pprint
+
+WTL_DEV_KIT_PATH = os.environ.get("WTL_DEV_KIT_PATH")
+WTL_DEV_KIT_REPOS_PATH = os.environ.get("WTL_DEV_KIT_REPOS_PATH")
+WTL_DEV_KIT_BIN_PATH = os.environ.get("WTL_DEV_KIT_BIN_PATH")
+
+config = {}
+
+with open(WTL_DEV_KIT_PATH + "/config/config.yml") as fh:
+    config['config'] = yaml.load(fh)
+
+with open(WTL_DEV_KIT_PATH + "/config/repositories.yml") as fh:
+    config['repositories'] = yaml.load(fh)
+
+parser = argparse.ArgumentParser()
+
+argcomplete.autocomplete(parser)
+args = parser.parse_args()
+
+os.environ['KEYCLOAK_URI'] = 'http://{host_ip}:9080'.format(host_ip=config['config']['host_ip'])
+os.environ['COURSES_BACKEND_URI'] = 'http://{host_ip}:10000'.format(host_ip=config['config']['host_ip'])
+os.environ['CHAPTERS_BACKEND_URI'] = 'http://{host_ip}:10001'.format(host_ip=config['config']['host_ip'])
+os.environ['PAGES_BACKEND_URI'] = 'http://{host_ip}:10002'.format(host_ip=config['config']['host_ip'])
+os.environ['COURSE_MIDTIER_URI'] = 'http://{host_ip}:11000'.format(host_ip=config['config']['host_ip'])
+
+for service_name in reversed([
+        "shared-services",
+        "courses-backend",
+        "chapters-backend",
+        "pages-backend",
+        "coursessecurity-backend",
+        "course-midtier",
+        "pwa-gateway",
+    ]):
+    if service_name in config['repositories']:
+        service_path = WTL_DEV_KIT_REPOS_PATH + "/" + service_name
+        print("Run '{service_name}'".format(service_name=service_name))
+        docker_compose_command = [
+            "docker-compose",
+            "-f","docker-compose.yml",
+        ]
+        if os.path.isfile(service_path + "/" + "docker-compose-dev-deps.yml"):
+            docker_compose_command.append("-f")
+            docker_compose_command.append("docker-compose-dev-deps.yml")
+        docker_compose_command.append("down")
+
+        subprocess.call(docker_compose_command, cwd=service_path)

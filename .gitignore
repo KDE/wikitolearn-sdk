@@ -1,3 +1,4 @@
+/config/config.yml
 /config/repositories.yml
 /repositories/
 !/repositories/.placeholder
