@@ -1,0 +1,60 @@
+# Run this script with:
+#
+# source ./setup-env
+
+unset WTL_DEV_KIT_PATH
+unset WTL_DEV_KIT_REPOS_PATH
+unset WTL_DEV_KIT_BIN_PATH
+
+if [ "$0" == "/bin/bash" ]
+then
+  unset WTL_THIS_SCRIPT_PATH
+  if [[ $(echo -e "$BASH_VERSION\n4.4.0" | sort -V | head -1) != "4.4.0" ]]
+  then
+    echo "Your bash version is too old ($BASH_VERSION)"
+    return 1 &> /dev/null
+    exit 1
+  fi
+  WTL_THIS_SCRIPT_PATH="$( cd "$(dirname "$BASH_SOURCE")" ; pwd -P )"
+else
+  echo "Can't detect a way to setup your shell, sorry"
+  echo
+  echo "Are you load this file with '. ./setup-env' or 'source ./setup-env'?"
+  echo
+  return 1 &> /dev/null
+  exit 1
+fi
+
+if [[ -z "$WTL_THIS_SCRIPT_PATH" ]]
+then
+  echo "Missing \$WTL_THIS_SCRIPT_PATH"
+  echo "Error in the setup process, exit"
+  return 1 &> /dev/null
+  exit 1
+fi
+
+WTL_DEV_KIT_PATH=$WTL_THIS_SCRIPT_PATH
+
+WTL_DEV_KIT_REPOS_PATH=$WTL_DEV_KIT_PATH"/repositories"
+if test ! -d $WTL_DEV_KIT_REPOS_PATH
+then
+  echo "Missing directory '$WTL_DEV_KIT_REPOS_PATH'"
+  return 1
+fi
+WTL_DEV_KIT_BIN_PATH=$WTL_DEV_KIT_PATH"/bin"
+if test ! -d $WTL_DEV_KIT_BIN_PATH
+then
+  echo "Missing directory '$WTL_DEV_KIT_BIN_PATH'"
+  return 1
+fi
+
+if ! echo "$PATH" | grep -Eq "(^|:)$WTL_DEV_KIT_BIN_PATH($|:)"
+then
+  PATH="$PATH:$WTL_DEV_KIT_BIN_PATH"
+fi
+
+export WTL_DEV_KIT_PATH
+export WTL_DEV_KIT_REPOS_PATH
+export WTL_DEV_KIT_BIN_PATH
+
+eval "$(register-python-argcomplete3 wtl-run-service)"

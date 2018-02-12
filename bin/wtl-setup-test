@@ -1,0 +1,71 @@
+#!/bin/bash
+WTL_MIN_DOCKER_SERVER_VERSION=17.09.0
+{
+  WTL_DOCKER_SERVER_VERSION=$(docker version --format '{{.Server.Version}}')
+} &> /dev/null
+if [ $? -ne 0 ]
+then
+  echo "Error running: docker"
+  exit 1
+fi
+if [[ "$WTL_DOCKER_SERVER_VERSION" != "$WTL_MIN_DOCKER_SERVER_VERSION" ]] && \
+  [[ "$(echo -e "$WTL_DOCKER_SERVER_VERSION\n$WTL_MIN_DOCKER_SERVER_VERSION" | sort -V | head -1)" != "$WTL_MIN_DOCKER_SERVER_VERSION" ]]
+then
+  echo "Docker server $WTL_DOCKER_SERVER_VERSION < $WTL_MIN_DOCKER_SERVER_VERSION"
+  exit 1
+fi
+
+WTL_MIN_DOCKER_CLIENT_VERSION=17.09.0
+{
+  WTL_DOCKER_CLIENT_VERSION=$(docker version --format '{{.Client.Version}}')
+} &> /dev/null
+if [ $? -ne 0 ]
+then
+  echo "Error running: docker"
+  exit 1
+fi
+if [[ "$WTL_DOCKER_CLIENT_VERSION" != "$WTL_MIN_DOCKER_CLIENT_VERSION" ]] && \
+  [[ "$(echo -e "$WTL_DOCKER_CLIENT_VERSION\n$WTL_MIN_DOCKER_CLIENT_VERSION" | sort -V | head -1)" != "$WTL_MIN_DOCKER_CLIENT_VERSION" ]]
+then
+  echo "Docker client $WTL_DOCKER_CLIENT_VERSION < $WTL_MIN_DOCKER_CLIENT_VERSION"
+  exit 1
+fi
+
+WTL_MIN_DOCKER_COMPOSE_VERSION=1.19.0
+{
+  WTL_DOCKER_COMPOSE_VERSION=$(docker-compose version --short)
+} &> /dev/null
+if [ $? -ne 0 ]
+then
+  echo "Error running: docker-compose"
+  exit 1
+fi
+if [[ "$WTL_DOCKER_COMPOSE_VERSION" != "$WTL_MIN_DOCKER_COMPOSE_VERSION" ]] && \
+  [[ "$(echo -e "$WTL_DOCKER_COMPOSE_VERSION\n$WTL_MIN_DOCKER_COMPOSE_VERSION" | sort -V | head -1)" != "$WTL_MIN_DOCKER_COMPOSE_VERSION" ]]
+then
+  echo "docker-compose $WTL_DOCKER_COMPOSE_VERSION < $WTL_MIN_DOCKER_COMPOSE_VERSION"
+  exit 1
+fi
+
+WTL_MIN_GIT_VERSION=2.11.0
+{
+  WTL_GIT_VERSION=$(git --version | sed 's#git version ##g')
+} &> /dev/null
+if [ $? -ne 0 ]
+then
+  echo "Error running: git"
+  exit 1
+fi
+if [[ "$WTL_GIT_VERSION" != "$WTL_MIN_GIT_VERSION" ]] && \
+  [[ "$(echo -e "$WTL_GIT_VERSION\n$WTL_MIN_GIT_VERSION" | sort -V | head -1)" != "$WTL_MIN_GIT_VERSION" ]]
+then
+  echo "docker-compose $WTL_GIT_VERSION < $WTL_MIN_GIT_VERSION"
+  exit 1
+fi
+
+if test ! -f config/repositories.yml
+then
+  echo "Missing config/repositories.yml"
+  exit 1
+fi
+echo "OK"
