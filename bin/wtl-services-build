@@ -24,6 +24,7 @@ for service_name in [
         "coursessecurity-backend",
         "course-midtier",
         "pwa-gateway",
+        "frontend",
     ]:
     if service_name in config['repositories']:
         service_path = WTL_DEV_KIT_REPOS_PATH + "/" + service_name

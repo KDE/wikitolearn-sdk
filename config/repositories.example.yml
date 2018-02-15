@@ -12,3 +12,5 @@ pwa-gateway:
   git: null
 shared-services:
   git: null
+frontend:
+  git: null
