@@ -30,12 +30,16 @@ for service_name in [
         service_path = WTL_DEV_KIT_REPOS_PATH + "/" + service_name
         print("Build '{service_name}'".format(service_name=service_name))
         if not os.path.isdir(service_path):
-            subprocess.call([
+            clone_cmd = [
                 "git",
                 "clone",
                 config['repositories'][service_name]['git'],
                 service_path
-            ])
+            ]
+            if 'git_branch' in config['repositories'][service_name]:
+                clone_cmd.append("-b")
+                clone_cmd.append(config['repositories'][service_name]['git_branch'])
+            subprocess.call(clone_cmd)
         subprocess.call([
             "git",
             "pull",

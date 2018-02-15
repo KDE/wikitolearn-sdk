@@ -14,3 +14,4 @@ shared-services:
   git: null
 frontend:
   git: null
+  git_branch: migration
