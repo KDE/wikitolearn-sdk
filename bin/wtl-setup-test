@@ -73,4 +73,9 @@ then
   echo "Missing config/repositories.yml"
   exit 1
 fi
+if test ! -f config/config.yml
+then
+  echo "Missing config/config.yml"
+  exit 1
+fi
 echo "OK"

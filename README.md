@@ -11,9 +11,11 @@ or the nearest approximation possibile.
 To setup the WikiToLearn dev kit you have to:
 
 1. clone this repository
-2. create the `config/repositories.yml` file (an example is `config/repositories.example.yml`)
-3. run `source ./setup-env`
-4. let's play
+3. Install `python3-argcomplete` (for `register-python-argcomplete3`)
+4. Install `python3-yaml`
+5. create the `config/repositories.yml` file (an example is `config/repositories.example.yml`)
+6. run `source ./setup-env`
+7. let's play
 
 ## repositories/ directory
 
