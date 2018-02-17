@@ -2,3 +2,5 @@
 /config/repositories.yml
 /repositories/
 !/repositories/.placeholder
+/tmp/
+!/tmp/.placeholder

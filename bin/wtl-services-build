@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
+import argcomplete, argparse
 import yaml
 import subprocess
+from pprint import pprint
 
 WTL_DEV_KIT_PATH = os.environ.get("WTL_DEV_KIT_PATH")
 WTL_DEV_KIT_REPOS_PATH = os.environ.get("WTL_DEV_KIT_REPOS_PATH")
@@ -15,6 +17,20 @@ with open(WTL_DEV_KIT_PATH + "/config/config.yml") as fh:
 
 with open(WTL_DEV_KIT_PATH + "/config/repositories.yml") as fh:
     config['repositories'] = yaml.load(fh)
+
+parser = argparse.ArgumentParser()
+
+argcomplete.autocomplete(parser)
+args = parser.parse_args()
+
+os.environ['KEYCLOAK_URI'] = 'http://{host_ip}:9080'.format(host_ip=config['config']['host_ip'])
+os.environ['COURSES_BACKEND_URI'] = 'http://{host_ip}:10000'.format(host_ip=config['config']['host_ip'])
+os.environ['CHAPTERS_BACKEND_URI'] = 'http://{host_ip}:10001'.format(host_ip=config['config']['host_ip'])
+os.environ['PAGES_BACKEND_URI'] = 'http://{host_ip}:10002'.format(host_ip=config['config']['host_ip'])
+os.environ['COURSE_MIDTIER_URI'] = 'http://{host_ip}:11000'.format(host_ip=config['config']['host_ip'])
+os.environ['PWA_GATEWAY_URI'] = 'http://{host_ip}:12000'.format(host_ip=config['config']['host_ip'])
+os.environ['PUBLIC_KEYCLOAK_URI'] = 'http://{host_ip}:9080'.format(host_ip=config['config']['host_ip'])
+os.environ['PUBLIC_PWA_GATEWAY_URI'] = 'http://{host_ip}:12000'.format(host_ip=config['config']['host_ip'])
 
 for service_name in [
         "shared-services",
@@ -54,4 +70,4 @@ for service_name in [
             docker_compose_command.append("docker-compose-dev-deps.yml")
         docker_compose_command.append("build")
 
-        subprocess.call(docker_compose_command, cwd=service_path)
+        subprocess.call(docker_compose_command, cwd=service_path, env=os.environ.copy())

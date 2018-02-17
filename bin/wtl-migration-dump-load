@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import os
+import argcomplete, argparse
+import yaml
+import subprocess
+from pprint import pprint
+
+WTL_DEV_KIT_PATH = os.environ.get("WTL_DEV_KIT_PATH")
+WTL_DEV_KIT_REPOS_PATH = os.environ.get("WTL_DEV_KIT_REPOS_PATH")
+WTL_DEV_KIT_BIN_PATH = os.environ.get("WTL_DEV_KIT_BIN_PATH")
+
+config = {}
+
+with open(WTL_DEV_KIT_PATH + "/config/config.yml") as fh:
+    config['config'] = yaml.load(fh)
+
+with open(WTL_DEV_KIT_PATH + "/config/repositories.yml") as fh:
+    config['repositories'] = yaml.load(fh)
+
+parser = argparse.ArgumentParser()
+
+argcomplete.autocomplete(parser)
+args = parser.parse_args()
+
+tmp_dir = WTL_DEV_KIT_PATH + "/tmp/"
+
+subprocess.call([
+    "wget",
+    "-N",
+    config['config']['migration']['dump_url'],
+], cwd=tmp_dir)
+
+subprocess.call([
+    "rm",
+    "-Rfv",
+    "last_output",
+], cwd=tmp_dir)
+
+subprocess.call([
+    "mkdir",
+    "last_output",
+], cwd=tmp_dir)
+
+subprocess.call([
+    "tar",
+    "-xvzf",
+    "last_output.tar.gz",
+    "-C",
+    "last_output",
+], cwd=tmp_dir)
+
+subprocess.call([
+    "./restore-dump.sh",
+], cwd=tmp_dir + "/last_output/")
