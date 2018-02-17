@@ -1,4 +1,9 @@
 #!/bin/bash
+if ! which register-python-argcomplete3 &> /dev/null
+then
+  echo "Missing register-python-argcomplete3 executable"
+  exit 1
+fi
 WTL_MIN_DOCKER_SERVER_VERSION=17.09.0
 {
   WTL_DOCKER_SERVER_VERSION=$(docker version --format '{{.Server.Version}}')
