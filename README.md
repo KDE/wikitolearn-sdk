@@ -1,53 +1,51 @@
 # wikitolearn-sdk
 
 This repository contains the dev kit for the WikiToLearn's microservices-oriented stack.
-
-This tools are helpful to work with the stack in a "point and click" fashion
-or the nearest approximation possibile.
+These tools are helpful to work with the stack in a "point and click" fashion or the nearest approximation possible.
 
 ## Setup
+**Minimum requirements:**
+* git
+* docker
+* docker-compose
+* python3
+* python3-argcomplete
+* python3-yaml
 
 To setup the WikiToLearn dev kit you have to:
 
 1. clone this repository
-3. Install `python3-argcomplete` (for `register-python-argcomplete3`)
-4. Install `python3-yaml`
-5. create the `config/repositories.yml` file (an example is `config/repositories.example.yml`)
-6. create the `config/config.yml` file (an example is `config/config.example.yml`)
-7. run `source ./setup-env`
+2. create the `config/repositories.yml` file (an example is `config/repositories.example.yml`)
+3. create the `config/config.yml` file (an example is `config/config.example.yml`)
+4. run `$ source ./setup-env`
+5. run `$ wtl-setup-test` to test if you have fulfilled the requirements and the configurations
 
-## Build, run and manage services
+## How to manage services
 
+### Build
 To build the services you have to run:
-
-``` ./bin/wtl-services-build ```
-
+``$ wtl-services-build``
 This command clone/pull the repositories and build all the services defined into docker-compose files.
 
+### Run
 To run the services you have to run:
-
-``` ./bin/wtl-services-run ```
-
+``$ wtl-services-run``
 This command start all the services.
 
+### Data restore
 If you need to restore a dump you can run:
-
-``` ./bin/wtl-dump-load ```
-
+``$ wtl-dump-load``
 N.B.: a `dump_url` must be set within `config/config.yml` file and the services have to be started.
 
+### Stop
 To stop the services you have to run:
-
-``` ./bin/wtl-services-stop ```
-
+``$ wtl-services-stop``
 This command stop and remove the service containers.
 
-## A note aboyt the repositories directory
+## A note about the repositories directory
 
-In the `repositories/` directory will be cloned the WikiToLearn's repositories.
-
-This non-configurable is in a fixed place to allow tools to work with the
-assumption of the relative location of every repository
+WikiToLearn's repositories will be cloned into the `repositories/` directory. This is a non-configurable option.
+It allows tools to work with the assumption of the relative location of each repository.
 
 ## LICENSE
 
