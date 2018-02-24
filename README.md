@@ -5,6 +5,7 @@ These tools are helpful to work with the stack in a "point and click" fashion or
 
 ## Setup
 **Minimum requirements:**
+
 * git
 * docker
 * docker-compose
@@ -24,22 +25,30 @@ To setup the WikiToLearn dev kit you have to:
 
 ### Build
 To build the services you have to run:
-``$ wtl-services-build``
+
+`$ wtl-services-build`
+
 This command clone/pull the repositories and build all the services defined into docker-compose files.
 
 ### Run
 To run the services you have to run:
-``$ wtl-services-run``
+
+`$ wtl-services-run`
+
 This command start all the services.
 
 ### Data restore
 If you need to restore a dump you can run:
-``$ wtl-dump-load``
+
+`$ wtl-dump-load`
+
 N.B.: a `dump_url` must be set within `config/config.yml` file and the services have to be started.
 
 ### Stop
 To stop the services you have to run:
-``$ wtl-services-stop``
+
+$ wtl-services-stop`
+
 This command stop and remove the service containers.
 
 ## A note about the repositories directory
