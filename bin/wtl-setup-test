@@ -70,8 +70,8 @@ fi
 
 if test ! -f config/repositories.yml
 then
-  echo "Missing config/repositories.yml"
-  exit 1
+  echo "Missing config/repositories.yml (not required)"
+# exit 1
 fi
 if test ! -f config/config.yml
 then

@@ -15,11 +15,12 @@ These tools are helpful to work with the stack in a "point and click" fashion or
 
 To setup the WikiToLearn dev kit you have to:
 
-1. clone this repository
-2. create the `config/repositories.yml` file (an example is `config/repositories.example.yml`)
-3. create the `config/config.yml` file (an example is `config/config.example.yml`)
-4. run `$ source ./setup-env`
-5. run `$ wtl-setup-test` to test if you have fulfilled the requirements and the configurations
+1. setup the `kde:` prefix in git with [this](https://community.kde.org/Sysadmin/GitKdeOrgManual#Let_Git_rewrite_URL_prefixes) guide
+2. clone this repository
+3. (optional) create the `config/repositories.yml` file (an example is `config/repositories.example.yml`)
+4. create the `config/config.yml` file (an example is `config/config.example.yml`)
+5. run `$ source ./setup-env`
+6. run `$ wtl-setup-test` to test if you have fulfilled the requirements and the configurations
 
 ## How to manage services
 

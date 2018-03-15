@@ -15,8 +15,12 @@ config = {}
 with open(WTL_DEV_KIT_PATH + "/config/config.yml") as fh:
     config['config'] = yaml.load(fh)
 
-with open(WTL_DEV_KIT_PATH + "/config/repositories.yml") as fh:
-    config['repositories'] = yaml.load(fh)
+if os.path.isfile(WTL_DEV_KIT_PATH + "/config/repositories.yml"):
+    with open(WTL_DEV_KIT_PATH + "/config/repositories.yml") as fh:
+        config['repositories'] = yaml.load(fh)
+else:
+    with open(WTL_DEV_KIT_PATH + "/config/repositories.example.yml") as fh:
+        config['repositories'] = yaml.load(fh)
 
 parser = argparse.ArgumentParser()
 
