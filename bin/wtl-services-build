@@ -74,4 +74,5 @@ for service_name in [
             docker_compose_command.append("docker-compose-dev-deps.yml")
         docker_compose_command.append("build")
 
-        subprocess.call(docker_compose_command, cwd=service_path, env=os.environ.copy())
+        if subprocess.call(docker_compose_command, cwd=service_path, env=os.environ.copy()) != 0:
+            raise Exception("{} failed".format(docker_compose_command))
