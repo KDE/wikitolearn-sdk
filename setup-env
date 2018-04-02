@@ -6,7 +6,7 @@ unset WTL_DEV_KIT_PATH
 unset WTL_DEV_KIT_REPOS_PATH
 unset WTL_DEV_KIT_BIN_PATH
 
-if [ "$0" == "/bin/bash" ]
+if [ "$0" == "/bin/bash" ] || [ "$0" == "bash" ]
 then
   unset WTL_THIS_SCRIPT_PATH
   if [[ $(echo -e "$BASH_VERSION\n4.4.0" | sort -V | head -1) != "4.4.0" ]]
@@ -17,7 +17,7 @@ then
   fi
   WTL_THIS_SCRIPT_PATH="$( cd "$(dirname "$BASH_SOURCE")" ; pwd -P )"
 else
-  echo "Can't detect a way to setup your shell, sorry"
+  echo "Can't detect a way to setup your shell ($0), sorry"
   echo
   echo "Are you load this file with '. ./setup-env' or 'source ./setup-env'?"
   echo

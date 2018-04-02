@@ -1,17 +1,17 @@
 chapters-backend:
-  git: kde:scratch/atundo/wikitolearn-chapters-backend.git
+  git: kde:wikitolearn-chapters-backend.git
 course-midtier:
-  git: kde:scratch/atundo/wikitolearn-course-midtier.git
+  git: kde:wikitolearn-course-midtier.git
 courses-backend:
-  git: kde:scratch/atundo/wikitolearn-courses-backend.git
+  git: kde:wikitolearn-courses-backend.git
 coursessecurity-backend:
   git: kde:scratch/atundo/wikitolearn-coursessecurity-backend.git
 pages-backend:
-  git: kde:scratch/atundo/wikitolearn-pages-backend.git
+  git: kde:wikitolearn-pages-backend.git
 pwa-gateway:
-  git: kde:scratch/atundo/wikitolearn-pwa-gateway.git
+  git: kde:wikitolearn-pwa-gateway.git
 shared-services:
-  git: kde:scratch/atundo/wikitolearn-shared-services.git
+  git: kde:wikitolearn-shared-services.git
 frontend:
-  git: kde:scratch/cristianbaldi/wikitolearn-frontend.git
+  git: kde:wikitolearn-frontend.git
   git_branch: migration

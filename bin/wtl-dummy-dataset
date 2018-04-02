@@ -1,0 +1,158 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+import requests
+import os
+import time
+import argcomplete, argparse
+import yaml
+import subprocess
+from pprint import pprint
+import sys
+
+print("This scirpt doesn't work")
+sys.exit(1)
+
+WTL_DEV_KIT_PATH = os.environ.get("WTL_DEV_KIT_PATH")
+WTL_DEV_KIT_REPOS_PATH = os.environ.get("WTL_DEV_KIT_REPOS_PATH")
+WTL_DEV_KIT_BIN_PATH = os.environ.get("WTL_DEV_KIT_BIN_PATH")
+
+config = {}
+
+with open(WTL_DEV_KIT_PATH + "/config/config.yml") as fh:
+    config['config'] = yaml.load(fh)
+
+if os.path.isfile(WTL_DEV_KIT_PATH + "/config/repositories.yml"):
+    with open(WTL_DEV_KIT_PATH + "/config/repositories.yml") as fh:
+        config['repositories'] = yaml.load(fh)
+else:
+    with open(WTL_DEV_KIT_PATH + "/config/repositories.example.yml") as fh:
+        config['repositories'] = yaml.load(fh)
+
+parser = argparse.ArgumentParser()
+
+argcomplete.autocomplete(parser)
+args = parser.parse_args()
+
+os.environ['KEYCLOAK_URI'] = 'http://{host_ip}:9080'.format(host_ip=config['config']['host_ip'])
+os.environ['COURSES_BACKEND_URI'] = 'http://{host_ip}:10000'.format(host_ip=config['config']['host_ip'])
+os.environ['CHAPTERS_BACKEND_URI'] = 'http://{host_ip}:10001'.format(host_ip=config['config']['host_ip'])
+os.environ['PAGES_BACKEND_URI'] = 'http://{host_ip}:10002'.format(host_ip=config['config']['host_ip'])
+os.environ['COURSE_MIDTIER_URI'] = 'http://{host_ip}:11000'.format(host_ip=config['config']['host_ip'])
+os.environ['PWA_GATEWAY_URI'] = 'http://{host_ip}:12000'.format(host_ip=config['config']['host_ip'])
+os.environ['PUBLIC_KEYCLOAK_URI'] = 'http://localhost:9080'
+os.environ['PUBLIC_PWA_GATEWAY_URI'] = 'http://localhost:12000'
+
+
+# keycloak config
+keycloak_realm_id = "wikitolearn-local"
+keycloak_realm_username = "admin"
+keycloak_realm_password = "admin"
+keycloak_base_url = os.environ.get("KEYCLOAK_URI") + "/auth/"
+keycloak_realm_base_url = keycloak_base_url + "admin/realms/{}".format(keycloak_realm_id)
+
+keycloak_auth_obj = None
+keycloak_last_login_success = 0
+def keycloak_get_auth_headers(base_headers={}):
+    global keycloak_auth_obj
+    global keycloak_base_url
+    global keycloak_last_login_success
+    headers = dict(base_headers)
+    do_login = False
+    if keycloak_auth_obj == None:
+        do_login = True
+    else:
+        if time.time() - keycloak_last_login_success > (keycloak_auth_obj['expires_in'] - 5):
+            do_login = True
+
+    if do_login:
+        auth_endpoint = keycloak_base_url + "realms/master/"
+        data = {}
+        data["client_id"] = "admin-cli"
+        data["username"] = keycloak_realm_username
+        data["password"] = keycloak_realm_password
+        data["grant_type"] = "password"
+
+        try:
+            auth_r = requests.post(
+                auth_endpoint + "protocol/openid-connect/token",
+                data=data
+            )
+            auth_r.raise_for_status()
+            keycloak_auth_obj = auth_r.json()
+            keycloak_last_login_success = time.time()
+        except Exception as e:
+            print("Keycloak Login Exception")
+            raise e
+    if keycloak_auth_obj != None and 'access_token' in keycloak_auth_obj:
+        headers["Authorization"] = "Bearer {}".format(keycloak_auth_obj['access_token'])
+    else:
+        pprint(keycloak_auth_obj)
+        time.sleep(1)
+    return headers
+
+if requests.get(keycloak_realm_base_url,headers=keycloak_get_auth_headers()).status_code == 404:
+    print("create realm")
+    create_realm = requests.post(
+        keycloak_base_url + "admin/realms",
+        json={
+            'enabled': True,
+            'id': keycloak_realm_id,
+            'realm': keycloak_realm_id
+        },
+        headers=keycloak_get_auth_headers()
+    )
+    create_realm.raise_for_status()
+
+has_client_frontend = False
+
+clients_list_request = requests.get(keycloak_realm_base_url + "/clients",headers=keycloak_get_auth_headers())
+for client in clients_list_request.json():
+    has_client_frontend = has_client_frontend or (client.get('clientId') == "frontend")
+
+if not has_client_frontend:
+    print("create client frontend")
+    create_frontend_client = requests.post(
+        keycloak_realm_base_url + "/clients",
+        json={
+            "enabled":True,
+            "attributes":{},
+            "redirectUris":[],
+            "clientId":"frontend",
+            "rootUrl":"http://localhost:13000",
+            "protocol":"openid-connect"
+        },
+        headers=keycloak_get_auth_headers()
+    )
+    create_frontend_client.raise_for_status()
+
+for user_n in range(0, 10):
+    keycloak_user = {}
+    keycloak_user['username'] = "user{}".format(user_n)
+    keycloak_user['firstName'] = "firstName" + "user{}".format(user_n)
+    keycloak_user['lastName'] = "lastName" + "user{}".format(user_n)
+    keycloak_user['email'] = "user{}".format(user_n) + "@localhost"
+    keycloak_user['credentials'] = [
+        {
+            "type": "password",
+            "value": "password",
+        }
+    ]
+    keycloak_user["enabled"] = True
+    keycloak_user["emailVerified"] = True
+    keycloak_user["attributes"] = {
+        "mw_id": user_n,
+    }
+
+    users_endpoint = keycloak_realm_base_url + "/users"
+    create_user_request = requests.post(
+        users_endpoint,
+        json=keycloak_user,
+        headers=keycloak_get_auth_headers()
+    )
+    try:
+        create_user_request.raise_for_status()
+    except Exception as exc:
+        print(exc)
+
+courses_index_request = requests.get(os.environ.get("COURSES_BACKEND_URI") + "/v1/courses")
+pprint(courses_index_request.json())

@@ -33,8 +33,8 @@ os.environ['CHAPTERS_BACKEND_URI'] = 'http://{host_ip}:10001'.format(host_ip=con
 os.environ['PAGES_BACKEND_URI'] = 'http://{host_ip}:10002'.format(host_ip=config['config']['host_ip'])
 os.environ['COURSE_MIDTIER_URI'] = 'http://{host_ip}:11000'.format(host_ip=config['config']['host_ip'])
 os.environ['PWA_GATEWAY_URI'] = 'http://{host_ip}:12000'.format(host_ip=config['config']['host_ip'])
-os.environ['PUBLIC_KEYCLOAK_URI'] = 'http://{host_ip}:9080'.format(host_ip=config['config']['host_ip'])
-os.environ['PUBLIC_PWA_GATEWAY_URI'] = 'http://{host_ip}:12000'.format(host_ip=config['config']['host_ip'])
+os.environ['PUBLIC_KEYCLOAK_URI'] = 'http://localhost:9080'
+os.environ['PUBLIC_PWA_GATEWAY_URI'] = 'http://localhost:12000'
 
 for service_name in reversed([
         "shared-services",
