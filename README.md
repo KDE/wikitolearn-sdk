@@ -41,7 +41,7 @@ This command start all the services.
 ### Data restore
 If you need to restore a dump you can run:
 
-`$ wtl-dump-load`
+`$ wtl-migration-dump-load`
 
 N.B.: a `dump_url` must be set within `config/config.yml` file and the services have to be started.
 
