@@ -14,4 +14,3 @@ shared-services:
   git: kde:wikitolearn-shared-services.git
 frontend:
   git: kde:wikitolearn-frontend.git
-  git_branch: migration
