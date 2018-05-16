@@ -48,7 +48,7 @@ for service_name in reversed([
     ]):
     if service_name in config['repositories']:
         service_path = WTL_DEV_KIT_REPOS_PATH + "/" + service_name
-        print("Run '{service_name}'".format(service_name=service_name))
+        print("Stop '{service_name}'".format(service_name=service_name))
         docker_compose_command = [
             "docker-compose",
             "-f","docker-compose.yml",
