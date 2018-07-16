@@ -9,9 +9,6 @@ import subprocess
 from pprint import pprint
 import sys
 
-print("This scirpt doesn't work")
-sys.exit(1)
-
 WTL_DEV_KIT_PATH = os.environ.get("WTL_DEV_KIT_PATH")
 WTL_DEV_KIT_REPOS_PATH = os.environ.get("WTL_DEV_KIT_REPOS_PATH")
 WTL_DEV_KIT_BIN_PATH = os.environ.get("WTL_DEV_KIT_BIN_PATH")
@@ -44,7 +41,7 @@ os.environ['PUBLIC_PWA_GATEWAY_URI'] = 'http://localhost:12000'
 
 
 # keycloak config
-keycloak_realm_id = "wikitolearn-local"
+keycloak_realm_id = os.environ.get('KEYCLOAK_AUTH_REALM')
 keycloak_realm_username = "admin"
 keycloak_realm_password = "admin"
 keycloak_base_url = os.environ.get("KEYCLOAK_URI") + "/auth/"
@@ -149,10 +146,11 @@ for user_n in range(0, 10):
         json=keycloak_user,
         headers=keycloak_get_auth_headers()
     )
+    print("User: " + keycloak_user['username'])
+    print("Password: " + keycloak_user['credentials'][0]['value'])
+    print("")
     try:
         create_user_request.raise_for_status()
-    except Exception as exc:
-        print(exc)
-
-courses_index_request = requests.get(os.environ.get("COURSES_BACKEND_URI") + "/v1/courses")
-pprint(courses_index_request.json())
+    except requests.exceptions.HTTPError as exc:
+        if exc.response.status_code != 409:
+            print(exc)
