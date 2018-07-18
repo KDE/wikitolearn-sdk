@@ -8,6 +8,7 @@ import yaml
 import subprocess
 from pprint import pprint
 import sys
+import uuid
 
 WTL_DEV_KIT_PATH = os.environ.get("WTL_DEV_KIT_PATH")
 WTL_DEV_KIT_REPOS_PATH = os.environ.get("WTL_DEV_KIT_REPOS_PATH")
@@ -49,24 +50,27 @@ keycloak_realm_base_url = keycloak_base_url + "admin/realms/{}".format(keycloak_
 
 keycloak_auth_obj = None
 keycloak_last_login_success = 0
-def keycloak_get_auth_headers(base_headers={}):
+
+def keycloak_get_auth_headers(username, password, realm, client_id, base_headers={}):
     global keycloak_auth_obj
     global keycloak_base_url
     global keycloak_last_login_success
     headers = dict(base_headers)
-    do_login = False
-    if keycloak_auth_obj == None:
-        do_login = True
-    else:
-        if time.time() - keycloak_last_login_success > (keycloak_auth_obj['expires_in'] - 5):
-            do_login = True
+    do_login = True
+    
+    # do_login = False
+    # if keycloak_auth_obj == None:
+    #     do_login = True
+    # else:
+    #     if time.time() - keycloak_last_login_success > (keycloak_auth_obj['expires_in'] - 5):
+    #         do_login = True
 
     if do_login:
-        auth_endpoint = keycloak_base_url + "realms/master/"
+        auth_endpoint = "{}realms/{}/".format(keycloak_base_url, realm)
         data = {}
-        data["client_id"] = "admin-cli"
-        data["username"] = keycloak_realm_username
-        data["password"] = keycloak_realm_password
+        data["client_id"] = client_id
+        data["username"] = username
+        data["password"] = password
         data["grant_type"] = "password"
 
         try:
@@ -78,7 +82,7 @@ def keycloak_get_auth_headers(base_headers={}):
             keycloak_auth_obj = auth_r.json()
             keycloak_last_login_success = time.time()
         except Exception as e:
-            print("Keycloak Login Exception")
+            print("Keycloak login exception!")
             raise e
     if keycloak_auth_obj != None and 'access_token' in keycloak_auth_obj:
         headers["Authorization"] = "Bearer {}".format(keycloak_auth_obj['access_token'])
@@ -87,8 +91,200 @@ def keycloak_get_auth_headers(base_headers={}):
         time.sleep(1)
     return headers
 
-if requests.get(keycloak_realm_base_url,headers=keycloak_get_auth_headers()).status_code == 404:
-    print("create realm")
+def create_course(user_headers):
+    headers = user_headers
+    headers["Content-Type"] = "application/json"
+    print("Creating course...")
+    create_course_request = requests.post(
+        os.environ.get("COURSE_MIDTIER_URI") + "/courses",
+        json={
+            'title': 'Course ' + str(uuid.uuid4()),
+            'language': 'it',
+            'chapters': [{
+                'title': 'Chapter ' + str(uuid.uuid4()),
+                'language': 'it',
+                'pages': [{
+                    'title': 'Page ' + str(uuid.uuid4()),
+                    'language': 'it',
+                    'content': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, '
+                        + 'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
+                        + 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea '
+                        + 'commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum '
+                        + 'dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, '
+                        + 'sunt in culpa qui officia deserunt mollit anim id est laborum.'
+                },{
+                    'title': 'Page ' + str(uuid.uuid4()),
+                    'language': 'it',
+                    'content': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, '
+                        + 'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
+                        + 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea '
+                        + 'commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum '
+                        + 'dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, '
+                        + 'sunt in culpa qui officia deserunt mollit anim id est laborum.'
+                },{
+                    'title': 'Page ' + str(uuid.uuid4()),
+                    'language': 'it',
+                    'content': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, '
+                        + 'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
+                        + 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea '
+                        + 'commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum '
+                        + 'dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, '
+                        + 'sunt in culpa qui officia deserunt mollit anim id est laborum.'
+                }]
+            },{
+                'title': 'Chapter ' + str(uuid.uuid4()),
+                'language': 'it',
+                'pages': [{
+                    'title': 'Page ' + str(uuid.uuid4()),
+                    'language': 'it',
+                    'content': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, '
+                        + 'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
+                        + 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea '
+                        + 'commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum '
+                        + 'dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, '
+                        + 'sunt in culpa qui officia deserunt mollit anim id est laborum.'
+                },{
+                    'title': 'Page ' + str(uuid.uuid4()),
+                    'language': 'it',
+                    'content': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, '
+                        + 'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
+                        + 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea '
+                        + 'commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum '
+                        + 'dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, '
+                        + 'sunt in culpa qui officia deserunt mollit anim id est laborum.'
+                },{
+                    'title': 'Page ' + str(uuid.uuid4()),
+                    'language': 'it',
+                    'content': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, '
+                        + 'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
+                        + 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea '
+                        + 'commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum '
+                        + 'dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, '
+                        + 'sunt in culpa qui officia deserunt mollit anim id est laborum.'
+                }]
+            },{
+                'title': 'Chapter ' + str(uuid.uuid4()),
+                'language': 'it',
+                'pages': [{
+                    'title': 'Page ' + str(uuid.uuid4()),
+                    'language': 'it',
+                    'content': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, '
+                        + 'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
+                        + 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea '
+                        + 'commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum '
+                        + 'dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, '
+                        + 'sunt in culpa qui officia deserunt mollit anim id est laborum.'
+                },{
+                    'title': 'Page ' + str(uuid.uuid4()),
+                    'language': 'it',
+                    'content': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, '
+                        + 'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
+                        + 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea '
+                        + 'commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum '
+                        + 'dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, '
+                        + 'sunt in culpa qui officia deserunt mollit anim id est laborum.'
+                },{
+                    'title': 'Page ' + str(uuid.uuid4()),
+                    'language': 'it',
+                    'content': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, '
+                        + 'sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. '
+                        + 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea '
+                        + 'commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum '
+                        + 'dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, '
+                        + 'sunt in culpa qui officia deserunt mollit anim id est laborum.'
+                }]
+            }]
+        },
+        headers=user_headers
+    )
+    create_course_request.raise_for_status()
+    return create_course_request.json()
+
+def edit_course_title(id, etag, user_headers):
+    headers = user_headers
+    headers["Content-Type"] = "application/json"
+    headers["If-Match"] = etag
+    print("Updating course...")
+    course_title = 'Course ' + str(uuid.uuid4())
+    edit_course_title_request = requests.patch(
+        os.environ.get("COURSE_MIDTIER_URI") + "/courses/" + id,
+        json={
+            'title': course_title,
+            'language': 'it'
+        },
+        headers=user_headers
+    )
+    edit_course_title_request.raise_for_status()
+    return edit_course_title_request.json()
+
+def add_chapter(id, user_headers):
+    headers = user_headers
+    headers["Content-Type"] = "application/json"
+    print("Adding chapter...")
+    
+    course = requests.get(
+        os.environ.get("COURSE_MIDTIER_URI") + "/courses/" + id
+    ).json()
+    chapters = course['chapters']
+    
+    for c in chapters:
+        del c['pages']
+        del c['title']
+        
+    chapters.append({
+        'title': 'Chapter ' + str(uuid.uuid4()),
+        'language': 'it'
+    })
+    
+    headers["If-Match"] = course['_etag']
+    
+    add_chapter_request = requests.post(
+        os.environ.get("COURSE_MIDTIER_URI") + "/courses/" + id + "/chapters",
+        json={
+            'title': course['title'],
+            'language': 'it',
+            'chapters': chapters
+        },
+        headers=user_headers
+    )
+    add_chapter_request.raise_for_status()
+    return add_chapter_request.json()
+
+def add_page(id, user_headers):
+    headers = user_headers
+    headers["Content-Type"] = "application/json"
+    print("Adding page...")
+    
+    course = requests.get(
+        os.environ.get("COURSE_MIDTIER_URI") + "/courses/" + id
+    ).json()
+    pages = course['chapters'][0]['pages']
+    
+    for p in pages:
+        del p['title']
+        
+    pages.append({
+        'title': 'Page ' + str(uuid.uuid4()),
+        'language': 'it',
+        'content': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+    })
+    
+    headers["If-Match"] = course['chapters'][0]['_etag']
+    
+    add_page_request = requests.post(
+        os.environ.get("COURSE_MIDTIER_URI") + "/chapters/" + course['chapters'][0]['_id'] + "/pages",
+        json={
+            'title': course['chapters'][0]['title'],
+            'language': 'it',
+            'pages': pages
+        },
+        headers=user_headers
+    )
+    add_page_request.raise_for_status()
+    return add_page_request.json()
+
+if requests.get(keycloak_realm_base_url,headers=keycloak_get_auth_headers(keycloak_realm_username, keycloak_realm_password, "master", "admin-cli")).status_code == 404:
+    print("Creating realm...")
     create_realm = requests.post(
         keycloak_base_url + "admin/realms",
         json={
@@ -96,18 +292,18 @@ if requests.get(keycloak_realm_base_url,headers=keycloak_get_auth_headers()).sta
             'id': keycloak_realm_id,
             'realm': keycloak_realm_id
         },
-        headers=keycloak_get_auth_headers()
+        headers=keycloak_get_auth_headers(keycloak_realm_username, keycloak_realm_password, "master", "admin-cli")
     )
     create_realm.raise_for_status()
 
 has_client_frontend = False
 
-clients_list_request = requests.get(keycloak_realm_base_url + "/clients",headers=keycloak_get_auth_headers())
+clients_list_request = requests.get(keycloak_realm_base_url + "/clients",headers=keycloak_get_auth_headers(keycloak_realm_username, keycloak_realm_password, "master", "admin-cli"))
 for client in clients_list_request.json():
     has_client_frontend = has_client_frontend or (client.get('clientId') == "frontend")
 
 if not has_client_frontend:
-    print("create client frontend")
+    print("Creating client frontend...")
     create_frontend_client = requests.post(
         keycloak_realm_base_url + "/clients",
         json={
@@ -118,7 +314,7 @@ if not has_client_frontend:
             "rootUrl":"http://localhost:13000",
             "protocol":"openid-connect"
         },
-        headers=keycloak_get_auth_headers()
+        headers=keycloak_get_auth_headers(keycloak_realm_username, keycloak_realm_password, "master", "admin-cli")
     )
     create_frontend_client.raise_for_status()
 
@@ -144,7 +340,7 @@ for user_n in range(0, 10):
     create_user_request = requests.post(
         users_endpoint,
         json=keycloak_user,
-        headers=keycloak_get_auth_headers()
+        headers=keycloak_get_auth_headers(keycloak_realm_username, keycloak_realm_password, "master", "admin-cli")
     )
     print("User: " + keycloak_user['username'])
     print("Password: " + keycloak_user['credentials'][0]['value'])
@@ -154,3 +350,18 @@ for user_n in range(0, 10):
     except requests.exceptions.HTTPError as exc:
         if exc.response.status_code != 409:
             print(exc)
+
+user_headers = keycloak_get_auth_headers("user1", "password", keycloak_realm_id, "frontend")
+
+for i in range(0, 10):
+    response_body = create_course(user_headers)
+    course_id = response_body['_id']
+    course_etag = response_body['_etag']
+    edit_course_title(course_id, course_etag, user_headers)
+    add_chapter(course_id, user_headers)
+    add_page(course_id, user_headers)
+    add_chapter(course_id, user_headers)
+    add_page(course_id, user_headers)
+    response_body = add_chapter(course_id, user_headers)
+    course_etag = response_body['_etag']
+    edit_course_title(course_id, course_etag, user_headers)
