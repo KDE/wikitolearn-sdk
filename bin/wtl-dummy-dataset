@@ -1,45 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import requests
-import os
-import time
-import argcomplete, argparse
-import yaml
-import subprocess
-from pprint import pprint
-import sys
-import uuid
-
-WTL_DEV_KIT_PATH = os.environ.get("WTL_DEV_KIT_PATH")
-WTL_DEV_KIT_REPOS_PATH = os.environ.get("WTL_DEV_KIT_REPOS_PATH")
-WTL_DEV_KIT_BIN_PATH = os.environ.get("WTL_DEV_KIT_BIN_PATH")
-
-config = {}
-
-with open(WTL_DEV_KIT_PATH + "/config/config.yml") as fh:
-    config['config'] = yaml.load(fh)
-
-if os.path.isfile(WTL_DEV_KIT_PATH + "/config/repositories.yml"):
-    with open(WTL_DEV_KIT_PATH + "/config/repositories.yml") as fh:
-        config['repositories'] = yaml.load(fh)
-else:
-    with open(WTL_DEV_KIT_PATH + "/config/repositories.example.yml") as fh:
-        config['repositories'] = yaml.load(fh)
-
-parser = argparse.ArgumentParser()
-
-argcomplete.autocomplete(parser)
-args = parser.parse_args()
-
-os.environ['KEYCLOAK_URI'] = 'http://{host_ip}:9080'.format(host_ip=config['config']['host_ip'])
-os.environ['COURSES_BACKEND_URI'] = 'http://{host_ip}:10000'.format(host_ip=config['config']['host_ip'])
-os.environ['CHAPTERS_BACKEND_URI'] = 'http://{host_ip}:10001'.format(host_ip=config['config']['host_ip'])
-os.environ['PAGES_BACKEND_URI'] = 'http://{host_ip}:10002'.format(host_ip=config['config']['host_ip'])
-os.environ['COURSE_MIDTIER_URI'] = 'http://{host_ip}:11000'.format(host_ip=config['config']['host_ip'])
-os.environ['PWA_GATEWAY_URI'] = 'http://{host_ip}:12000'.format(host_ip=config['config']['host_ip'])
-os.environ['PUBLIC_KEYCLOAK_URI'] = 'http://localhost:9080'
-os.environ['PUBLIC_PWA_GATEWAY_URI'] = 'http://localhost:12000'
-
+import os,sys
+sys.path.insert(0, os.path.realpath(os.path.dirname(os.path.abspath(__file__)) + "/../pythonlibs/"))
+from basicsetup import *
 
 # keycloak config
 keycloak_realm_id = os.environ.get('KEYCLOAK_AUTH_REALM')
@@ -57,7 +20,7 @@ def keycloak_get_auth_headers(username, password, realm, client_id, base_headers
     global keycloak_last_login_success
     headers = dict(base_headers)
     do_login = True
-    
+
     # do_login = False
     # if keycloak_auth_obj == None:
     #     do_login = True
@@ -221,23 +184,23 @@ def add_chapter(id, user_headers):
     headers = user_headers
     headers["Content-Type"] = "application/json"
     print("Adding chapter...")
-    
+
     course = requests.get(
         os.environ.get("COURSE_MIDTIER_URI") + "/courses/" + id
     ).json()
     chapters = course['chapters']
-    
+
     for c in chapters:
         del c['pages']
         del c['title']
-        
+
     chapters.append({
         'title': 'Chapter ' + str(uuid.uuid4()),
         'language': 'it'
     })
-    
+
     headers["If-Match"] = course['_etag']
-    
+
     add_chapter_request = requests.post(
         os.environ.get("COURSE_MIDTIER_URI") + "/courses/" + id + "/chapters",
         json={
@@ -254,23 +217,23 @@ def add_page(id, user_headers):
     headers = user_headers
     headers["Content-Type"] = "application/json"
     print("Adding page...")
-    
+
     course = requests.get(
         os.environ.get("COURSE_MIDTIER_URI") + "/courses/" + id
     ).json()
     pages = course['chapters'][0]['pages']
-    
+
     for p in pages:
         del p['title']
-        
+
     pages.append({
         'title': 'Page ' + str(uuid.uuid4()),
         'language': 'it',
         'content': 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
     })
-    
+
     headers["If-Match"] = course['chapters'][0]['_etag']
-    
+
     add_page_request = requests.post(
         os.environ.get("COURSE_MIDTIER_URI") + "/chapters/" + course['chapters'][0]['_id'] + "/pages",
         json={
