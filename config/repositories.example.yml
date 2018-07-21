@@ -14,3 +14,5 @@ shared-services:
   git: kde:wikitolearn-shared-services.git
 frontend:
   git: kde:wikitolearn-frontend.git
+pdf-backend:
+  git: kde:scratch/atundo/wikitolearn-pdf-backend.git

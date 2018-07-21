@@ -29,6 +29,8 @@ os.environ['KEYCLOAK_URI'] = 'http://{host_ip}:9080'.format(host_ip=config['conf
 os.environ['COURSES_BACKEND_URI'] = 'http://{host_ip}:10000'.format(host_ip=config['config']['host_ip'])
 os.environ['CHAPTERS_BACKEND_URI'] = 'http://{host_ip}:10001'.format(host_ip=config['config']['host_ip'])
 os.environ['PAGES_BACKEND_URI'] = 'http://{host_ip}:10002'.format(host_ip=config['config']['host_ip'])
+os.environ['COURSESSECURITY_BACKEND_URI'] = 'http://{host_ip}:10003'.format(host_ip=config['config']['host_ip'])
+os.environ['PDF_BACKEND_BACKEND_URI'] = 'http://{host_ip}:10004'.format(host_ip=config['config']['host_ip'])
 os.environ['COURSE_MIDTIER_URI'] = 'http://{host_ip}:11000'.format(host_ip=config['config']['host_ip'])
 os.environ['PWA_GATEWAY_URI'] = 'http://{host_ip}:12000'.format(host_ip=config['config']['host_ip'])
 os.environ['MONGO_HOST'] = 'mongodb://{host_ip}:27017'.format(host_ip=config['config']['host_ip'])
@@ -39,3 +41,16 @@ parser = argparse.ArgumentParser()
 
 argcomplete.autocomplete(parser)
 args = parser.parse_args()
+
+def get_services_to_manage():
+    return [
+        "shared-services",
+        "courses-backend",
+        "chapters-backend",
+        "pages-backend",
+        "coursessecurity-backend",
+        "pdf-backend",
+        "course-midtier",
+        "pwa-gateway",
+        "frontend",
+    ]

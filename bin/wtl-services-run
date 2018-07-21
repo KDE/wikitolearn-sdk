@@ -4,16 +4,7 @@ import os,sys
 sys.path.insert(0, os.path.realpath(os.path.dirname(os.path.abspath(__file__)) + "/../pythonlibs/"))
 from basicsetup import *
 
-for service_name in [
-        "shared-services",
-        "courses-backend",
-        "chapters-backend",
-        "pages-backend",
-        "coursessecurity-backend",
-        "course-midtier",
-        "pwa-gateway",
-        "frontend",
-    ]:
+for service_name in get_services_to_manage():
     if service_name in config['repositories']:
         service_path = WTL_DEV_KIT_REPOS_PATH + "/" + service_name
         print("Run '{service_name}'".format(service_name=service_name))
