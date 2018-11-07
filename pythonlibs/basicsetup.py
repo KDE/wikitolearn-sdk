@@ -30,8 +30,10 @@ os.environ['COURSES_BACKEND_URI'] = 'http://{host_ip}:10000'.format(host_ip=conf
 os.environ['CHAPTERS_BACKEND_URI'] = 'http://{host_ip}:10001'.format(host_ip=config['config']['host_ip'])
 os.environ['PAGES_BACKEND_URI'] = 'http://{host_ip}:10002'.format(host_ip=config['config']['host_ip'])
 os.environ['COURSESSECURITY_BACKEND_URI'] = 'http://{host_ip}:10003'.format(host_ip=config['config']['host_ip'])
-os.environ['PDF_BACKEND_BACKEND_URI'] = 'http://{host_ip}:10004'.format(host_ip=config['config']['host_ip'])
+os.environ['PDF_BACKEND_URI'] = 'http://{host_ip}:10004'.format(host_ip=config['config']['host_ip'])
+os.environ['MATH_BACKEND_URI'] = 'http://{host_ip}:10005'.format(host_ip=config['config']['host_ip'])
 os.environ['COURSE_MIDTIER_URI'] = 'http://{host_ip}:11000'.format(host_ip=config['config']['host_ip'])
+os.environ['MATH_MIDTIER_URI'] = 'http://{host_ip}:11001'.format(host_ip=config['config']['host_ip'])
 os.environ['PWA_GATEWAY_URI'] = 'http://{host_ip}:12000'.format(host_ip=config['config']['host_ip'])
 os.environ['MONGO_HOST'] = 'mongodb://{host_ip}:27017'.format(host_ip=config['config']['host_ip'])
 os.environ['PUBLIC_KEYCLOAK_URI'] = 'http://localhost:9080'
@@ -50,6 +52,8 @@ def get_services_to_manage():
         "pages-backend",
         "coursessecurity-backend",
         "pdf-backend",
+        "math-backend",
+        "math-midtier",
         "course-midtier",
         "pwa-gateway",
         "frontend",
