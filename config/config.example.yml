@@ -1,3 +1,5 @@
+# host_ip is your docker0 inet address and services use it to communicate between each other.
+# if you're on a Mac and don't have a docker0 interface, you can use your local ip address.
 host_ip: 172.17.0.1
 migration:
   dump_url: null

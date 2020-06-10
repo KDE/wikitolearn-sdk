@@ -15,8 +15,12 @@ WTL_DEV_KIT_TMP_PATH = WTL_DEV_KIT_PATH + "/tmp/"
 
 config = {}
 
-with open(WTL_DEV_KIT_PATH + "/config/config.yml") as fh:
-    config['config'] = yaml.load(fh)
+if os.path.isfile(WTL_DEV_KIT_PATH + "/config/config.yml"):
+    with open(WTL_DEV_KIT_PATH + "/config/config.yml") as fh:
+        config['config'] = yaml.load(fh)
+else:
+    with open(WTL_DEV_KIT_PATH + "/config/config.example.yml") as fh:
+        config['config'] = yaml.load(fh)
 
 if os.path.isfile(WTL_DEV_KIT_PATH + "/config/repositories.yml"):
     with open(WTL_DEV_KIT_PATH + "/config/repositories.yml") as fh:

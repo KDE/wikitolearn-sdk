@@ -57,8 +57,8 @@ export WTL_DEV_KIT_PATH
 export WTL_DEV_KIT_REPOS_PATH
 export WTL_DEV_KIT_BIN_PATH
 
-eval "$(register-python-argcomplete3 wtl-services-build)"
-eval "$(register-python-argcomplete3 wtl-services-run)"
-eval "$(register-python-argcomplete3 wtl-services-stop)"
+eval "$(register-python-argcomplete wtl-services-build)"
+eval "$(register-python-argcomplete wtl-services-run)"
+eval "$(register-python-argcomplete wtl-services-stop)"
 
 export KEYCLOAK_AUTH_REALM=wikitolearn-local

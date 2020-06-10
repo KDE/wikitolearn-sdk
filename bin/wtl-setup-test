@@ -1,7 +1,7 @@
 #!/bin/bash
-if ! which register-python-argcomplete3 &> /dev/null
+if ! which register-python-argcomplete &> /dev/null
 then
-  echo "Missing register-python-argcomplete3 executable"
+  echo "Missing register-python-argcomplete executable"
   exit 1
 fi
 WTL_MIN_DOCKER_SERVER_VERSION=17.09.0
@@ -71,11 +71,11 @@ fi
 if test ! -f config/repositories.yml
 then
   echo "Missing config/repositories.yml (not required)"
-# exit 1
+  # exit 1
 fi
 if test ! -f config/config.yml
 then
   echo "Missing config/config.yml"
-  exit 1
+  # exit 1
 fi
 echo "OK"
